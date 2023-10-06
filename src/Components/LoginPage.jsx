@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const LoginPage = () => {
+const LoginPage = ({ handlePage }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -70,6 +70,9 @@ const LoginPage = () => {
             value={password}
           />
           <button>로그인</button>
+          <button type="button" onClick={handlePage}>
+            회원가입
+          </button>
         </form>
       </section>
     </>
