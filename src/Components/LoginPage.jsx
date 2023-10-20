@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const LoginPage = ({ handlePage }) => {
   const [email, setEmail] = useState("");
@@ -9,29 +10,22 @@ const LoginPage = ({ handlePage }) => {
     const reqPath = "/user/login";
     const reqUrl = baseUrl + reqPath;
 
-    const loginData = {
-      user: {
-        email: email,
-        password: password,
-      },
-    };
     try {
-      //로그인해서 token 꺼내기
-      const res = await fetch(reqUrl, {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
+      await axios({
+        method: "post",
+        url: reqUrl,
+        data: {
+          user: {
+            email: email,
+            password: password,
+          },
         },
-        body: JSON.stringify(loginData),
+      }).then((res) => {
+        console.log("로그인에 성공했습니다!");
+        const token = res.data.user.token;
+        // //로컬스토리지에 토큰 저장하기
+        localStorage.setItem("token", token);
       });
-      const json = await res.json();
-      console.log(json);
-
-      const token = json.user.token;
-      console.log(token);
-
-      //로컬스토리지에 토큰 저장하기
-      localStorage.setItem("token", token);
     } catch (error) {
       console.error();
       alert("로그인에 실패했습니다.");
