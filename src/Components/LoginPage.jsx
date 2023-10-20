@@ -21,14 +21,44 @@ const LoginPage = ({ handlePage }) => {
           },
         },
       }).then((res) => {
-        console.log("로그인에 성공했습니다!");
-        const token = res.data.user.token;
-        // //로컬스토리지에 토큰 저장하기
-        localStorage.setItem("token", token);
+        // 이메일,비밀번호 모두 입력 완료 하지만 불일치
+        if (res.data.message === "이메일 또는 비밀번호가 일치하지 않습니다.") {
+          console.log("이메일 또는 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 이메일, 비밀번호 모두 입력 완료 그리고 일치!
+        if (res.data.user) {
+          console.log(res.data.user);
+          // //로컬스토리지에 토큰 저장하기
+          const token = res.data.user.token;
+          localStorage.setItem("token", token);
+        }
       });
-    } catch (error) {
-      console.error();
-      alert("로그인에 실패했습니다.");
+    } catch (err) {
+      //에러 처리
+      if (err.response) {
+        // 요청이 이루어졌고 서버가 응답했을 경우
+        const { status, config, data } = err.response;
+
+        if (status === 422) {
+          console.log(data);
+        }
+
+        if (status === 404) {
+          //404 이미지 출력
+          console.log(`${config.url} not found`);
+        }
+
+        if (status === 500) {
+          console.log("Server error");
+        }
+      } else if (err.request) {
+        // 요청이 이루어졌으나 서버에서 응답이 없었을 경우
+        console.log("Error", err.message);
+      } else {
+        // 그 외 다른 에러
+        console.log("Error", err.message);
+      }
     }
   };
 
